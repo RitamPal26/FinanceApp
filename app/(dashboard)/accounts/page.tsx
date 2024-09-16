@@ -4,11 +4,9 @@ import { Loader2, Plus } from "lucide-react";
 
 import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
-import { useBulkDeleteAccounts } from "@/features/accounts/api/use-bulk-delete-accounts";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { useBulkDeleteAccounts } from "@/features/accounts/api/use-bulk-delete-accounts";
 import { useGetAccounts } from "@/features/accounts/api/use-get-accounts";
 import { useNewAccount } from "@/features/accounts/hooks/use-new-account";
 
@@ -41,22 +39,24 @@ const AccountsPage = () => {
   }
 
   return (
-    <div className="max-w-screen-2xl mx-auto w-full pb-10 -mt-24">
+    <div className="mx-auto -mt-6 w-full max-w-screen-2xl pb-10">
       <Card className="border-none drop-shadow-sm">
         <CardHeader className="gap-y-2 lg:flex-row lg:items-center lg:justify-between">
-          <CardTitle className="text-xl line-clamp-1">Accounts</CardTitle>
-          <Button onClick={newAccount.onOpen} size="sm">
-            <Plus className="size-4 mr-2" />
-            Add New
+          <CardTitle className="line-clamp-1 text-xl">Accounts Page</CardTitle>
+
+          <Button size="sm" onClick={newAccount.onOpen}>
+            <Plus className="mr-2 size-4" /> Add new
           </Button>
         </CardHeader>
+
         <CardContent>
           <DataTable
-            filterKey="email"
+            filterKey="name"
             columns={columns}
             data={accounts}
             onDelete={(row) => {
               const ids = row.map((r) => r.original.id);
+
               deleteAccounts.mutate({ ids });
             }}
             disabled={isDisabled}
