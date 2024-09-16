@@ -1,25 +1,22 @@
 "use client";
 
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  Row,
+  SortingState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { Trash } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash } from "lucide-react";
-import { useConfirm } from "@/hooks/use-confirm";
-
-import {
-  ColumnDef,
-  Row,
-  ColumnFiltersState,
-  SortingState,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-} from "@tanstack/react-table";
-
 import {
   Table,
   TableBody,
@@ -28,12 +25,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useConfirm } from "@/hooks/use-confirm";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   filterKey: string;
-  onDelete?: (rows: TData[]) => void;
+  onDelete: (rows: Row<TData>[]) => void;
   disabled?: boolean;
 }
 
@@ -61,8 +59,8 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
     state: {
       sorting,
@@ -74,6 +72,7 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       <ConfirmDialog />
+
       <div className="flex items-center py-4">
         <Input
           placeholder={`Filter ${filterKey}...`}
@@ -83,12 +82,13 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        {table.getFilteredRowModel().rows.length > 0 && (
+
+        {table.getFilteredSelectedRowModel().rows.length > 0 && (
           <Button
             disabled={disabled}
             size="sm"
             variant="outline"
-            className="ml-auto font-normal text-xs"
+            className="ml-auto text-xs font-normal"
             onClick={async () => {
               const ok = await confirm();
 
@@ -98,11 +98,12 @@ export function DataTable<TData, TValue>({
               }
             }}
           >
-            <Trash className="size-4 mr-2" />
-            Delete({table.getFilteredSelectedRowModel().rows.length})
+            <Trash className="mr-2 size-4" />
+            Delete ({table.getFilteredSelectedRowModel().rows.length})
           </Button>
         )}
       </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -153,11 +154,13 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
+
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
+
         <Button
           variant="outline"
           size="sm"
